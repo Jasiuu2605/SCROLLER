@@ -18,6 +18,10 @@ section p {
     margin: 16px auto;
 }
 
+section img {
+    max-width: 100%;
+}
+
 section p::first-letter {
     font-size: 30px;
 }

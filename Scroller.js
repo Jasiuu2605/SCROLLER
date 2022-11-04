@@ -1,13 +1,14 @@
 class Scroller {
   constructor(rootSelector) {
     const rootElement = document.querySelector(rootSelector);
-    this.sections = [...document.querySelectorAll("section")];
+    this.sections = document.querySelectorAll("section");
     const sectionsArr = [...this.sections];
+
     const currentSectionIndex = sectionsArr.findIndex(this.isScrolledIntoView);
 
     this.currentSectionIndex = Math.max(currentSectionIndex, 0);
 
-    this.isThrotled = false;
+    this.isThrottled = false;
 
     this.drawNavigation();
   }
@@ -17,57 +18,55 @@ class Scroller {
     const elemTop = rect.top;
     const elemBottom = Math.floor(rect.bottom);
 
-    const isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
+    const isVissible = elemTop >= 0 && elemBottom <= window.innerHeight;
 
-    return isVisible;
+    return isVissible;
   }
 
-  listenScroll = (event) => {
-    if (this.isThrotled) return;
-
-    this.isThrotled = true;
+  listenScroll(event) {
+    if (this.isThrottled) return;
+    this.isThrottled = true;
 
     setTimeout(() => {
-      this.isThrotled = false;
+      this.isThrottled = false;
     }, 1000);
 
-    const direction = event.wheelDelta < 0 ? 1 : -1;
+    const direction = event.deltaY > 0 ? 1 : -1;
 
     this.scroll(direction);
-  };
+  }
 
-  scroll = (direction) => {
+  scroll(direction) {
     if (direction === 1) {
-      console.log(direction);
       const isLastSection =
         this.currentSectionIndex === this.sections.length - 1;
       if (isLastSection) return;
     } else if (direction === -1) {
-      console.log(direction);
       const firstSection = this.currentSectionIndex === 0;
       if (firstSection) return;
     }
+
     this.currentSectionIndex = this.currentSectionIndex + direction;
 
     this.scrollToCurrentSection();
-  };
+  }
 
-  scrollToCurrentSection = () => {
+  scrollToCurrentSection() {
     this.selectActiveNavItem();
     this.sections[this.currentSectionIndex].scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
-  };
+  }
 
-  drawNavigation = () => {
-
+  drawNavigation() {
     this.navigationContainer = document.createElement("aside");
     this.navigationContainer.setAttribute("class", "scroller__navigation");
     const list = document.createElement("ul");
 
     this.sections.forEach((section, index) => {
       const listItem = document.createElement("li");
+
       listItem.addEventListener("click", () => {
         this.currentSectionIndex = index;
 
@@ -80,21 +79,21 @@ class Scroller {
     this.navigationContainer.appendChild(list);
 
     document.body.appendChild(this.navigationContainer);
-     this.selectActiveNavItem();
-  };
 
-  selectActiveNavItem = () => {
+    this.selectActiveNavItem();
+  }
+
+  selectActiveNavItem() {
     if (this.navigationContainer) {
-        const navigationItems = this.navigationContainer.querySelectorAll("li");
+      const navigationItems = this.navigationContainer.querySelectorAll("li");
 
-        navigationItems.forEach((item, index) => {
-          if (index === this.currentSectionIndex) {
-            item.classList.add("active");
-          } else {
-            item.classList.remove("active");
-          }
-        });
+      navigationItems.forEach((item, index) => {
+        if (index === this.currentSectionIndex) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
     }
-    
   }
 }
